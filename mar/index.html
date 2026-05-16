@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ 📚 Biblioteca de Mar 📚 ✨</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <nav class="topbar">
+            <div class="logo">✨ 📚 Biblioteca de Mar 📚 ✨ </div>
+
+            <div class="nav-buttons">
+                <button onclick="showSection('dashboard')">Dashboard</button>
+                <button onclick="showSection('library')">Biblioteca</button>
+                <button onclick="showSection('wishlist')">Wishlist</button>
+            </div>
+        </nav>
+
+        <!--
+        <h1>Biblioteca</h1>
+
+        <button onclick="showSection('dashboard')">Dashboard</button>
+        <button onclick="showSection('library')">Biblioteca</button>
+        <button onclick="showSection('wishlist')">Wishlist</button>
+    -->
+
+        <main class="content">
+
+            <section id="dashboard" class="section active">
+                <h2>Dashboard</h2>
+
+                <div class="stats">
+                    <div class="card">
+                        <h3>Total</h3>
+                        <p id="totalBooks">0</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Leídos</h3>
+                        <p id="readBooks">0</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Pendientes</h3>
+                        <p id="pendingBooks">0</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Abandonados</h3>
+                        <p id="abandonedBooks">0</p>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </section>
+
+            <section id="library" class="section">
+                <div class="header-section">
+                    <h2>Biblioteca</h2>
+                    <button onclick="openBookModal()">Agregar Libro</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Género</th>
+                                <th>Estado</th>
+                                <th>Prioridad</th>
+                                <th>Calificación</th>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                                <th>Recomendable</th>
+                                <th>Releer</th>
+                                <th>Notas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksContainer"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="wishlist" class="section">
+                <div class="header-section">
+                    <h2>Wishlist</h2>
+                    <button onclick="openWishlistModal()">Agregar Libro al Wishlist</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th>Autor</th>
+                                <th>Prioridad</th>
+                                <th>Notas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wishlistContainer"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="bookModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modalTitle">Agregar Libro</h2>
+
+            <input type="text" id="title" placeholder="Título">
+            <input type="text" id="author" placeholder="Autor">
+            <input type="text" id="genre" placeholder="Género">
+
+            <select id="status">
+                <option value="Pendiente">Pendiente</option>
+                <option value="Leído">Leído</option>
+                <option value="Abandonado">Abandonado</option>
+            </select>
+
+            <select id="priority">
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+            </select>
+
+            <input type="number" id="rating" min="1" max="5" placeholder="Calificación 1-5">
+
+            <label>Fecha inicio</label>
+            <input type="date" id="startDate">
+
+            <label>Fecha fin</label>
+            <input type="date" id="endDate">
+
+            <select id="recommendable">
+                <option value="Sí">Recomendable: Sí</option>
+                <option value="No">Recomendable: No</option>
+            </select>
+
+            <select id="reread">
+                <option value="Sí">Volvería a leer: Sí</option>
+                <option value="No">Volvería a leer: No</option>
+            </select>
+
+            <textarea id="notes" placeholder="Notas especiales"></textarea>
+
+            <div class="modal-buttons">
+                <button onclick="saveBook()">Guardar</button>
+                <button onclick="closeBookModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="wishlistModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Agregar Wishlist</h2>
+
+            <input type="text" id="wishTitle" placeholder="Libro">
+            <input type="text" id="wishAuthor" placeholder="Autor">
+
+            <select id="wishPriority">
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+            </select>
+
+            <textarea id="wishNotes" placeholder="Notas especiales"></textarea>
+
+            <div class="modal-buttons">
+                <button onclick="saveWishlist()">Guardar</button>
+                <button onclick="closeWishlistModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
