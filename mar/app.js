@@ -1,7 +1,30 @@
 const PASSWORD = "myd";
 
-let books = JSON.parse(localStorage.getItem("books")) || [];
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    updateDoc,
+    doc
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDQYh15eSCMDvBXvMyVryRNuEWQdGR_9QQ",
+    authDomain: "biblio-mar.firebaseapp.com",
+    projectId: "biblio-mar",
+    storageBucket: "biblio-mar.firebasestorage.app",
+    messagingSenderId: "762754771629",
+    appId: "1:762754771629:web:0b22190a2dd5a816c8b424"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let books = [];
+let wishlist = [];
 
 let editingIndex = null;
 let editingWishlistIndex = null;
@@ -67,7 +90,7 @@ function clearBookForm() {
     document.getElementById('reread').value = 'Sí';
 }
 
-function saveBook() {
+async function saveBook() {
 
     const book = {
         title: document.getElementById('title').value,
@@ -84,16 +107,15 @@ function saveBook() {
     };
 
     if (editingIndex !== null) {
-        books[editingIndex] = book;
+        const bookId = books[editingIndex].id;
+        await updateDoc(doc(db, 'books', bookId), book);
     } else {
-        books.push(book);
+        await addDoc(collection(db, 'books'), book);
     }
 
-    localStorage.setItem('books', JSON.stringify(books));
+    await loadBooks();
 
     closeBookModal();
-    renderBooks();
-    updateDashboard();
 }
 
 function renderBooks() {
@@ -127,18 +149,17 @@ function renderBooks() {
     });
 }
 
-function deleteBook(index) {
+async function deleteBook(index) {
 
     if (!checkPassword()) {
         alert('Contraseña incorrecta');
         return;
     }
 
-    books.splice(index, 1);
-    localStorage.setItem('books', JSON.stringify(books));
+    const bookId = books[index].id;
+    await deleteDoc(doc(db, 'books', bookId));
 
-    renderBooks();
-    updateDashboard();
+    await loadBooks();
 }
 
 function openWishlistModal(index = null) {
@@ -174,7 +195,7 @@ function closeWishlistModal() {
     document.getElementById('wishlistModal').classList.add('hidden');
 }
 
-function saveWishlist() {
+async function saveWishlist() {
 
     const item = {
         title: document.getElementById('wishTitle').value,
@@ -184,15 +205,15 @@ function saveWishlist() {
     };
 
     if (editingWishlistIndex !== null) {
-        wishlist[editingWishlistIndex] = item;
+        const wishId = wishlist[editingWishlistIndex].id;
+        await updateDoc(doc(db, 'wishlist', wishId), item);
     } else {
-        wishlist.push(item);
+        await addDoc(collection(db, 'wishlist'), item);
     }
 
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    await loadWishlist();
 
     closeWishlistModal();
-    renderWishlist();
 }
 
 function renderWishlist() {
@@ -219,17 +240,17 @@ function renderWishlist() {
     });
 }
 
-function deleteWishlist(index) {
+async function deleteWishlist(index) {
 
     if (!checkPassword()) {
         alert('Contraseña incorrecta');
         return;
     }
 
-    wishlist.splice(index, 1);
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    const wishId = wishlist[index].id;
+    await deleteDoc(doc(db, 'wishlist', wishId));
 
-    renderWishlist();
+    await loadWishlist();
 }
 
 function updateDashboard() {
@@ -262,17 +283,59 @@ function renderChart(read, pending, abandoned) {
             datasets: [{
                 data: [read, pending, abandoned],
                 backgroundColor: [
-                    '#5f2568',
-                    '#b37eb5',
-                    'rgba(95, 37, 104, 0.25)'
+                    '#7c5c4f',
+                    '#d1b38b',
+                    '#b23b3b'
                 ]
             }]
         }
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+async function loadBooks() {
+
+    const querySnapshot = await getDocs(collection(db, 'books'));
+
+    books = [];
+
+    querySnapshot.forEach((documento) => {
+        books.push({
+            id: documento.id,
+            ...documento.data()
+        });
+    });
+
     renderBooks();
-    renderWishlist();
     updateDashboard();
+}
+
+async function loadWishlist() {
+
+    const querySnapshot = await getDocs(collection(db, 'wishlist'));
+
+    wishlist = [];
+
+    querySnapshot.forEach((documento) => {
+        wishlist.push({
+            id: documento.id,
+            ...documento.data()
+        });
+    });
+
+    renderWishlist();
+}
+
+window.showSection = showSection;
+window.openBookModal = openBookModal;
+window.closeBookModal = closeBookModal;
+window.saveBook = saveBook;
+window.deleteBook = deleteBook;
+window.openWishlistModal = openWishlistModal;
+window.closeWishlistModal = closeWishlistModal;
+window.saveWishlist = saveWishlist;
+window.deleteWishlist = deleteWishlist;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadBooks();
+    await loadWishlist();
 });
