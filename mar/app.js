@@ -283,9 +283,9 @@ function renderChart(read, pending, abandoned) {
             datasets: [{
                 data: [read, pending, abandoned],
                 backgroundColor: [
-                    '#7c5c4f',
-                    '#d1b38b',
-                    '#b23b3b'
+                    '#5f2568',
+                    '#b37eb5',
+                    'rgba(95, 37, 104, 0.25)'
                 ]
             }]
         }
