@@ -1,69 +1,187 @@
-/*!
-    * Start Bootstrap - Freelancer v6.0.4 (https://startbootstrap.com/themes/freelancer)
-    * Copyright 2013-2020 Start Bootstrap
-    * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-freelancer/blob/master/LICENSE)
-    */
-    (function($) {
-    "use strict"; // Start of use strict
-  
-    // Smooth scrolling using jQuery easing
-    $('a.js-scroll-trigger[href*="#"]:not([href="#"])').click(function() {
-      if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
-        var target = $(this.hash);
-        target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-        if (target.length) {
-          $('html, body').animate({
-            scrollTop: (target.offset().top - 71)
-          }, 1000, "easeInOutExpo");
-          return false;
-        }
-      }
-    });
-  
-    // Scroll to top button appear
-    $(document).scroll(function() {
-      var scrollDistance = $(this).scrollTop();
-      if (scrollDistance > 100) {
-        $('.scroll-to-top').fadeIn();
-      } else {
-        $('.scroll-to-top').fadeOut();
-      }
-    });
-  
-    // Closes responsive menu when a scroll trigger link is clicked
-    $('.js-scroll-trigger').click(function() {
-      $('.navbar-collapse').collapse('hide');
-    });
-  
-    // Activate scrollspy to add active class to navbar items on scroll
-    $('body').scrollspy({
-      target: '#mainNav',
-      offset: 80
-    });
-  
-    // Collapse Navbar
-    var navbarCollapse = function() {
-      if ($("#mainNav").offset().top > 100) {
-        $("#mainNav").addClass("navbar-shrink");
-      } else {
-        $("#mainNav").removeClass("navbar-shrink");
-      }
-    };
-    // Collapse now if page is not at top
-    navbarCollapse();
-    // Collapse the navbar when page is scrolled
-    $(window).scroll(navbarCollapse);
-  
-    // Floating label headings for the contact form
-    $(function() {
-      $("body").on("input propertychange", ".floating-label-form-group", function(e) {
-        $(this).toggleClass("floating-label-form-group-with-value", !!$(e.target).val());
-      }).on("focus", ".floating-label-form-group", function() {
-        $(this).addClass("floating-label-form-group-with-focus");
-      }).on("blur", ".floating-label-form-group", function() {
-        $(this).removeClass("floating-label-form-group-with-focus");
+/* ==========================================
+   Daniel Díaz Rodríguez Portfolio
+========================================== */
+
+// ===============================
+// Menú Responsive
+// ===============================
+
+const menuToggle = document.querySelector(".menu-toggle");
+const navMenu = document.querySelector("nav ul");
+
+if (menuToggle) {
+
+  menuToggle.addEventListener("click", () => {
+
+    navMenu.classList.toggle("active");
+
+  });
+
+}
+
+// ===============================
+// Navbar Shadow
+// ===============================
+
+const header = document.querySelector("header");
+
+window.addEventListener("scroll", () => {
+
+  if (window.scrollY > 20) {
+
+    header.classList.add("shadow");
+
+  } else {
+
+    header.classList.remove("shadow");
+
+  }
+
+});
+
+// ===============================
+// Scroll Suave
+// ===============================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+  anchor.addEventListener("click", function (e) {
+
+    e.preventDefault();
+
+    const target = document.querySelector(this.getAttribute("href"));
+
+    if (target) {
+
+      target.scrollIntoView({
+
+        behavior: "smooth"
+
       });
-    });
-  
-  })(jQuery); // End of use strict
-  
+
+    }
+
+    if (navMenu) {
+
+      navMenu.classList.remove("active");
+
+    }
+
+  });
+
+});
+
+// ===============================
+// Resaltar sección activa
+// ===============================
+
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll("nav ul li a");
+
+window.addEventListener("scroll", () => {
+
+  let current = "";
+
+  sections.forEach(section => {
+
+    const sectionTop = section.offsetTop - 120;
+
+    if (window.scrollY >= sectionTop) {
+
+      current = section.getAttribute("id");
+
+    }
+
+  });
+
+  navLinks.forEach(link => {
+
+    link.classList.remove("current");
+
+    if (link.getAttribute("href") === "#" + current) {
+
+      link.classList.add("current");
+
+    }
+
+  });
+
+});
+
+// ===============================
+// Animación de aparición
+// ===============================
+
+const observer = new IntersectionObserver(entries => {
+
+  entries.forEach(entry => {
+
+    if (entry.isIntersecting) {
+
+      entry.target.classList.add("show");
+
+    }
+
+  });
+
+}, {
+  threshold: 0.15
+});
+
+document.querySelectorAll("section").forEach(section => {
+
+  section.classList.add("hidden");
+
+  observer.observe(section);
+
+});
+
+// ===============================
+// Botón Back To Top
+// ===============================
+
+const topButton = document.createElement("button");
+
+topButton.innerHTML = "↑";
+
+topButton.id = "topButton";
+
+document.body.appendChild(topButton);
+
+window.addEventListener("scroll", () => {
+
+  if (window.scrollY > 500) {
+
+    topButton.classList.add("visible");
+
+  } else {
+
+    topButton.classList.remove("visible");
+
+  }
+
+});
+
+topButton.addEventListener("click", () => {
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
+
+});
+
+// ===============================
+// Footer Año Automático
+// ===============================
+
+const footerYear = document.getElementById("year");
+
+if (footerYear) {
+
+  footerYear.textContent = new Date().getFullYear();
+
+}
